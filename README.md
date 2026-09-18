@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Yağmur'a Rezerve
 
-## Getting Started
+Hesap oluşturma, profil iletileri, birebir DM ve grup mesajlaşması sunan basit bir sosyal uygulama.
 
-First, run the development server:
+## Özellikler
+
+- **Hesap sistemi**: Doğrulama kodu gerektirmeden, herhangi bir e-posta ve şifreyle anında kayıt/giriş.
+- **İleti**: Her kullanıcının profilinde, herkesin bırakabildiği genel duvar iletileri.
+- **DM**: Kullanıcılar arası birebir mesajlaşma, okunmadı rozetiyle.
+- **Gruplar**: Grup oluşturma, katılma/ayrılma ve sadece üyelerin görüp yazabildiği grup içi mesajlaşma.
+
+## Teknolojiler
+
+- [Next.js](https://nextjs.org) (App Router, TypeScript, Tailwind CSS)
+- [Prisma](https://www.prisma.io) + SQLite (`@prisma/adapter-better-sqlite3`)
+- Oturumlar için imzalı JWT cookie ([jose](https://github.com/panva/jose)), şifreler için `bcryptjs`
+
+## Kurulum
+
+```bash
+npm install
+```
+
+Proje kök dizininde bir `.env` dosyası oluştur:
+
+```bash
+DATABASE_URL="file:./dev.db"
+AUTH_SECRET="<rastgele-uzun-bir-gizli-anahtar>"
+```
+
+Veritabanını oluştur:
+
+```bash
+npx prisma migrate deploy
+```
+
+## Geliştirme sunucusu
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) adresini aç.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+npm run start
+```
