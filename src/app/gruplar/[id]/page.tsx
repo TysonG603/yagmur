@@ -5,7 +5,13 @@ import { requireUser } from "@/lib/auth";
 import { formatDateTime } from "@/lib/format";
 import AutoRefresh from "@/components/auto-refresh";
 import GroupMessageForm from "./group-message-form";
-import { joinGroupAction, leaveGroupAction } from "./actions";
+import AddMemberForm from "./add-member-form";
+import {
+  joinGroupAction,
+  leaveGroupAction,
+  removeMemberAction,
+  setMemberRoleAction,
+} from "./actions";
 
 export default async function GrupDetayPage({
   params,
@@ -30,8 +36,11 @@ export default async function GrupDetayPage({
     notFound();
   }
 
-  const isMember = group.members.some((m) => m.userId === user.id);
+  const currentMembership = group.members.find((m) => m.userId === user.id);
+  const isMember = Boolean(currentMembership);
   const isOwner = group.ownerId === user.id;
+  const isAdmin = currentMembership?.role === "admin";
+  const canManage = isOwner || isAdmin;
 
   const messages = isMember
     ? await prisma.groupMessage.findMany({
@@ -132,21 +141,65 @@ export default async function GrupDetayPage({
           <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
             Üyeler
           </h2>
-          <ul className="mt-2 flex flex-col gap-1">
-            {group.members.map((m) => (
-              <li key={m.id}>
-                <Link
-                  href={`/profil/${m.user.username}`}
-                  className="text-sm text-zinc-700 hover:text-sky-800"
-                >
-                  @{m.user.username}
-                  {m.role === "owner" && (
-                    <span className="ml-1 text-xs text-zinc-400">(kurucu)</span>
+          <ul className="mt-2 flex flex-col gap-2">
+            {group.members.map((m) => {
+              const isSelf = m.userId === user.id;
+              const canRemove =
+                canManage && !isSelf && m.role !== "owner" && !(isAdmin && m.role === "admin");
+              const canToggleAdmin = isOwner && m.role !== "owner" && !isSelf;
+
+              return (
+                <li key={m.id} className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                  <Link
+                    href={`/profil/${m.user.username}`}
+                    className="text-sm text-zinc-700 hover:text-sky-800"
+                  >
+                    @{m.user.username}
+                    {m.role === "owner" && (
+                      <span className="ml-1 text-xs text-zinc-400">(kurucu)</span>
+                    )}
+                    {m.role === "admin" && (
+                      <span className="ml-1 text-xs text-sky-600">(yönetici)</span>
+                    )}
+                  </Link>
+
+                  {(canToggleAdmin || canRemove) && (
+                    <div className="flex gap-1">
+                      {canToggleAdmin && (
+                        <form
+                          action={setMemberRoleAction.bind(
+                            null,
+                            group.id,
+                            m.userId,
+                            m.role === "admin" ? "member" : "admin",
+                          )}
+                        >
+                          <button
+                            type="submit"
+                            className="rounded border border-zinc-300 px-1.5 py-0.5 text-xs text-zinc-600 hover:bg-zinc-50"
+                          >
+                            {m.role === "admin" ? "Yöneticilikten al" : "Yönetici yap"}
+                          </button>
+                        </form>
+                      )}
+                      {canRemove && (
+                        <form action={removeMemberAction.bind(null, group.id, m.userId)}>
+                          <button
+                            type="submit"
+                            className="rounded border border-red-200 px-1.5 py-0.5 text-xs text-red-700 hover:bg-red-50"
+                          >
+                            Çıkar
+                          </button>
+                        </form>
+                      )}
+                    </div>
                   )}
-                </Link>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
+
+          {canManage && <AddMemberForm groupId={group.id} />}
         </div>
       </div>
     </div>
