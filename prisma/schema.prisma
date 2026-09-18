@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  username     String   @unique
+  passwordHash String
+  bio          String?
+  createdAt    DateTime @default(now())
+
+  sentMessages      DirectMessage[] @relation("SentMessages")
+  receivedMessages  DirectMessage[] @relation("ReceivedMessages")
+  wallPostsReceived WallPost[]      @relation("WallOwner")
+  wallPostsAuthored WallPost[]      @relation("WallAuthor")
+  ownedGroups       Group[]         @relation("GroupOwner")
+  memberships       GroupMember[]
+  groupMessages     GroupMessage[]
+}
+
+model DirectMessage {
+  id          String    @id @default(cuid())
+  content     String
+  createdAt   DateTime  @default(now())
+  readAt      DateTime?
+
+  senderId    String
+  sender      User      @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  recipientId String
+  recipient   User      @relation("ReceivedMessages", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, recipientId])
+  @@index([recipientId, senderId])
+}
+
+model WallPost {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  ownerId  String
+  owner    User   @relation("WallOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation("WallAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  ownerId String
+  owner   User   @relation("GroupOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  members  GroupMember[]
+  messages GroupMessage[]
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  joinedAt DateTime @default(now())
+  role     String   @default("member")
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model GroupMessage {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  groupId  String
+  group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+}
