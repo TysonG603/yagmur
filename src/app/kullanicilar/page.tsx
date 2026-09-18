@@ -21,8 +21,11 @@ export default async function KullanicilarPage() {
 
       <ul className="mt-6 divide-y divide-zinc-200 rounded-lg border border-zinc-200 bg-white">
         {users.map((u) => (
-          <li key={u.id} className="flex items-center justify-between px-4 py-3">
-            <div>
+          <li
+            key={u.id}
+            className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-3"
+          >
+            <div className="min-w-0">
               <Link
                 href={`/profil/${u.username}`}
                 className="font-medium text-zinc-900 hover:text-sky-800"
@@ -34,7 +37,7 @@ export default async function KullanicilarPage() {
             {u.username !== currentUser.username && (
               <Link
                 href={`/mesajlar/${u.username}`}
-                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
+                className="shrink-0 rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
               >
                 Mesaj gönder
               </Link>

@@ -42,13 +42,16 @@ export default async function MesajThreadPage({
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-8">
       <AutoRefresh />
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-zinc-900">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <h1 className="min-w-0 truncate text-xl font-semibold text-zinc-900">
           <Link href={`/profil/${other.username}`} className="hover:text-sky-800">
             @{other.username}
           </Link>
         </h1>
-        <Link href="/mesajlar" className="text-sm text-zinc-500 hover:text-sky-800">
+        <Link
+          href="/mesajlar"
+          className="shrink-0 text-sm text-zinc-500 hover:text-sky-800"
+        >
           Tüm mesajlar
         </Link>
       </div>

@@ -1,18 +1,22 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { logoutAction } from "@/app/cikis/actions";
+import MobileNav from "@/components/mobile-nav";
 
 export default async function Navbar() {
   const user = await getCurrentUser();
 
   return (
-    <header className="border-b border-zinc-200 bg-white">
+    <header className="relative border-b border-zinc-200 bg-white">
       <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
-        <Link href="/" className="text-lg font-semibold tracking-tight text-sky-800">
+        <Link
+          href="/"
+          className="text-base font-semibold tracking-tight text-sky-800 sm:text-lg"
+        >
           Yağmur&apos;a Rezerve
         </Link>
 
-        <nav className="flex items-center gap-4 text-sm">
+        <nav className="hidden items-center gap-4 text-sm sm:flex">
           {user ? (
             <>
               <Link href="/kullanicilar" className="text-zinc-600 hover:text-sky-800">
@@ -53,6 +57,8 @@ export default async function Navbar() {
             </>
           )}
         </nav>
+
+        <MobileNav username={user?.username ?? null} />
       </div>
     </header>
   );

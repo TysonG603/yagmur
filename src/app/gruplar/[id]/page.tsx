@@ -46,8 +46,8 @@ export default async function GrupDetayPage({
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-8">
       {isMember && <AutoRefresh />}
 
-      <div className="flex items-start justify-between rounded-lg border border-zinc-200 bg-white p-5">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-3 rounded-lg border border-zinc-200 bg-white p-5">
+        <div className="min-w-0 break-words">
           <h1 className="text-xl font-semibold text-zinc-900">{group.name}</h1>
           <p className="mt-1 text-xs text-zinc-400">
             Kurucu: @{group.owner.username} · {group.members.length} üye

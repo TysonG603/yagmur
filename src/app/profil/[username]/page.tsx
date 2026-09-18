@@ -70,7 +70,7 @@ export default async function ProfilPage({
         <ul className="mt-4 flex flex-col gap-3">
           {wallPosts.map((post) => (
             <li key={post.id} className="rounded-lg border border-zinc-200 bg-white p-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <Link
                   href={`/profil/${post.author.username}`}
                   className="text-sm font-medium text-zinc-900 hover:text-sky-800"
